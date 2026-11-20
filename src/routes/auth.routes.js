@@ -13,6 +13,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import passport from "../config/passport.js";
 import { googleCallback } from "../controllers/googleAuth.controller.js";
 import authMiddleware from '../middleware/auth.middleware.js';
+import { handleCalendarCallback, initiateCalendarConnection } from '../controllers/googleCalendar.controller.js';
 const router = Router();
 
 router.post('/register', validate(registerSchema), asyncHandler(register));
@@ -41,5 +42,17 @@ router.get(
     session: false,
   }),
   asyncHandler(googleCallback)
+);
+
+
+router.post(
+  "/google/calendar",
+  authMiddleware,
+  initiateCalendarConnection
+);
+
+router.get(
+  "/google/calendar/callback",
+  asyncHandler(handleCalendarCallback)
 );
 export default router;

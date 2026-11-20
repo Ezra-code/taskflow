@@ -54,6 +54,7 @@ model OAuthConnection {
   provider          OAuthProvider
   providerAccountId String
   accessToken       String
+  accountEmail      String
   refreshToken      String?
   expiresAt         DateTime?
   scopes            String[]
