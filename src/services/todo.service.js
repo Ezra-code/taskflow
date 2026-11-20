@@ -1,4 +1,4 @@
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
 
 export const createTodo = async (userId, data) => {
   return prisma.todo.create({
@@ -23,7 +23,7 @@ export const getTodos = async (
   userId,
   filters = {},
   sort = {},
-  pagination = {}
+  pagination = {},
 ) => {
   const where = {
     userId,
@@ -31,7 +31,7 @@ export const getTodos = async (
   };
 
   const orderBy = {
-    [sort.sortBy || "createdAt"]: sort.sortOrder || "desc",
+    [sort.sortBy || 'createdAt']: sort.sortOrder || 'desc',
   };
 
   const { skip = 0, take = 10 } = pagination;
@@ -76,7 +76,6 @@ export const updateTodo = async (userId, todoId, data) => {
 
   return getTodoById(userId, todoId);
 };
-
 
 export const deleteTodo = async (userId, todoId) => {
   const result = await prisma.todo.deleteMany({

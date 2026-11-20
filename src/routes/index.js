@@ -1,17 +1,15 @@
-
-import { Router } from "express";
-import authRouter from "./auth.routes.js";
-import todoRouter from "./todo.routes.js";
-
+import { Router } from 'express';
+import authRouter from './auth.routes.js';
+import todoRouter from './todo.routes.js';
 
 const router = Router();
 
-router.use("/auth", authRouter);
-router.use("/todos", todoRouter);
-router.get("/health", (req, res) => {
+router.use('/auth', authRouter);
+router.use('/todos', todoRouter);
+router.get('/health', (req, res) => {
   res.status(200).json({
-    status: "success",
-    message: "TaskFlow API is healthy",
+    status: 'success',
+    message: 'TaskFlow API is healthy',
   });
 });
 

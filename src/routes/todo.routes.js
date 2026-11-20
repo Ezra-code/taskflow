@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   create,
   getAll,
@@ -6,51 +6,48 @@ import {
   remove,
   setCompletion,
   update,
-} from "../controllers/todo.controller.js";import validate from "../middleware/validate.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import asyncHandler from "../utils/asyncHandler.js";
-import { createTodoSchema, todoCompletionSchema, todoQuerySchema, updateTodoSchema } from "../validators/todo.validator.js";
+} from '../controllers/todo.controller.js';
+import validate from '../middleware/validate.js';
+import authMiddleware from '../middleware/auth.middleware.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import {
+  createTodoSchema,
+  todoCompletionSchema,
+  todoQuerySchema,
+  updateTodoSchema,
+} from '../validators/todo.validator.js';
 
 const router = Router();
 
 router.post(
-  "/",
+  '/',
   authMiddleware,
   validate(createTodoSchema),
-  asyncHandler(create)
+  asyncHandler(create),
 );
 
 router.get(
-  "/",
+  '/',
   authMiddleware,
-  validate(todoQuerySchema, "query"),
-  asyncHandler(getAll)
+  validate(todoQuerySchema, 'query'),
+  asyncHandler(getAll),
 );
 
-router.get(
-  "/:id",
-  authMiddleware,
-  asyncHandler(getOne)
-);
+router.get('/:id', authMiddleware, asyncHandler(getOne));
 
 router.patch(
-  "/:id",
+  '/:id',
   authMiddleware,
   validate(updateTodoSchema),
-  asyncHandler(update)
+  asyncHandler(update),
 );
 
-
-router.delete(
-  "/:id",
-  authMiddleware,
-  asyncHandler(remove)
-);
+router.delete('/:id', authMiddleware, asyncHandler(remove));
 
 router.patch(
-  "/:id/completion",
+  '/:id/completion',
   authMiddleware,
   validate(todoCompletionSchema),
-  asyncHandler(setCompletion)
+  asyncHandler(setCompletion),
 );
 export default router;

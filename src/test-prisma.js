@@ -1,10 +1,10 @@
-import "dotenv/config";
-import prisma from "./config/prisma.js";
+import 'dotenv/config';
+import prisma from './config/prisma.js';
 
 const user = await prisma.user.create({
   data: {
-    fullName: "TaskFlow Test User",
-    email: "test@taskflow.com",
+    fullName: 'TaskFlow Test User',
+    email: 'test@taskflow.com',
   },
 });
 

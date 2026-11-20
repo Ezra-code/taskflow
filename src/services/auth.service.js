@@ -1,9 +1,9 @@
-import { randomUUID } from "node:crypto";
-import prisma from "../config/prisma.js";
-import { hashPassword,comparePassword } from "../utils/password.js";
-import createAppError from "../utils/appError.js";
-import { generateAccessToken } from "../utils/token.js";
-import { createSession } from "./session.service.js";
+import { randomUUID } from 'node:crypto';
+import prisma from '../config/prisma.js';
+import { hashPassword, comparePassword } from '../utils/password.js';
+import createAppError from '../utils/appError.js';
+import { generateAccessToken } from '../utils/token.js';
+import { createSession } from './session.service.js';
 
 export const registerUser = async ({ fullName, email, password }) => {
   const normalizedEmail = email.trim().toLowerCase();
@@ -20,7 +20,7 @@ export const registerUser = async ({ fullName, email, password }) => {
 
         authAccounts: {
           create: {
-            provider: "LOCAL",
+            provider: 'LOCAL',
             providerAccountId: userId,
             passwordHash,
           },
@@ -35,8 +35,8 @@ export const registerUser = async ({ fullName, email, password }) => {
     });
     return user;
   } catch (error) {
-    if (error.code === "P2002") {
-      throw createAppError("Email is already registered", 409);
+    if (error.code === 'P2002') {
+      throw createAppError('Email is already registered', 409);
     }
 
     throw error;
@@ -48,7 +48,7 @@ export const findLocalAccount = async (email) => {
 
   return prisma.authAccount.findFirst({
     where: {
-      provider: "LOCAL",
+      provider: 'LOCAL',
       user: {
         email: normalizedEmail,
       },
@@ -59,21 +59,17 @@ export const findLocalAccount = async (email) => {
   });
 };
 
-
 export const verifyCredentials = async ({ email, password }) => {
   const account = await findLocalAccount(email);
 
   if (!account || !account.passwordHash) {
-    throw createAppError("Invalid email or password", 401);
+    throw createAppError('Invalid email or password', 401);
   }
 
-  const isPasswordValid = await comparePassword(
-    password,
-    account.passwordHash
-  );
+  const isPasswordValid = await comparePassword(password, account.passwordHash);
 
   if (!isPasswordValid) {
-    throw createAppError("Invalid email or password", 401);
+    throw createAppError('Invalid email or password', 401);
   }
 
   return {
@@ -82,7 +78,6 @@ export const verifyCredentials = async ({ email, password }) => {
     email: account.user.email,
   };
 };
-
 
 export const loginUser = async ({ email, password }) => {
   const user = await verifyCredentials({ email, password });

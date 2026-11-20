@@ -57,15 +57,22 @@ pull request; reconcile it with these files.
 
   Leave the region for the user (`prismaCloud({ region })` or `PRISMA_REGION`); see
   `app-region`.
+
 - `module.mjs`, which provisions the database from the same contract the service uses:
 
   ```javascript
-  import { module } from "@prisma/composer";
-  import { postgres } from "@prisma/composer-prisma-cloud/orm";
-  import web, { data } from "./dist/service.mjs";
+  import { module } from '@prisma/composer';
+  import { postgres } from '@prisma/composer-prisma-cloud/orm';
+  import web, { data } from './dist/service.mjs';
 
-  export default module("<app name>", ({ provision }) => {
-    const database = provision(postgres({ name: "database", contract: data, config: "prisma.config.ts" }));
+  export default module('<app name>', ({ provision }) => {
+    const database = provision(
+      postgres({
+        name: 'database',
+        contract: data,
+        config: 'prisma.config.ts',
+      }),
+    );
     provision(web, { deps: { db: database } });
   });
   ```
@@ -82,22 +89,28 @@ pull request; reconcile it with these files.
    `Cannot find module`. Delete it and write `src/service.mts`:
 
    ```typescript
-   import node from "@prisma/composer/node";
-   import { compute } from "@prisma/composer-prisma-cloud";
-   import { postgres, dataContract } from "@prisma/composer-prisma-cloud/orm";
-   import type { Contract } from "./prisma/contract.js";
-   import contractJson from "./prisma/contract.json" with { type: "json" };
+   import node from '@prisma/composer/node';
+   import { compute } from '@prisma/composer-prisma-cloud';
+   import { postgres, dataContract } from '@prisma/composer-prisma-cloud/orm';
+   import type { Contract } from './prisma/contract.js';
+   import contractJson from './prisma/contract.json' with { type: 'json' };
 
    export const data = dataContract<Contract>(contractJson);
 
    export default compute({
-     name: "<keep the name the setup wrote>",
+     name: '<keep the name the setup wrote>',
      deps: { db: postgres(data) },
-     build: node({ module: import.meta.url, dir: ".", entry: "server.js", dependencies: "external" }),
+     build: node({
+       module: import.meta.url,
+       dir: '.',
+       entry: 'server.js',
+       dependencies: 'external',
+     }),
    });
    ```
 
    In `module.mjs`, import `./dist/service.mjs` instead of `./service.mjs`.
+
 2. **Check `entry`.** The setup guesses it and can be wrong (it wrote `index.js` for an app
    whose `npm start` runs `server.js`); it is the file in `dist/` that `npm start` runs.
 3. **`dependencies: "external"`.** `tsc` does not bundle, so the deploy must ship `node_modules`
@@ -106,7 +119,7 @@ pull request; reconcile it with these files.
 
    ```typescript
    // src/db.ts
-   import service from "./service.mjs";
+   import service from './service.mjs';
    export const db = service.load().db.client;
    ```
 
@@ -119,6 +132,7 @@ pull request; reconcile it with these files.
      empty.
    - A seed script must not import `db.ts`. Keep its own `postgres({ contract, url })` client,
      and seed with `DATABASE_URL="$(npx prisma dev url database)" npx tsx prisma/seed.ts`.
+
 5. **Ship runtime files.** Copy `views/`, `public/` or similar into `dist/` in `build`
    (`tsc && cp -R views public dist/`) and resolve them from `__dirname`. Otherwise every
    rendered page fails with `Failed to lookup view`.
@@ -127,16 +141,19 @@ pull request; reconcile it with these files.
 
    ```typescript
    // src/service.mts: add to compute({ ... })
-   input: type({ sessionSecret: secretString() }), // type from "arktype", secretString from "@prisma/composer/arktype"
-   // module.mjs: envSecret from "@prisma/composer-prisma-cloud"
-   provision(web, { deps: { db: database }, input: { sessionSecret: envSecret("SESSION_SECRET") } });
+   input: (type({ sessionSecret: secretString() }), // type from "arktype", secretString from "@prisma/composer/arktype"
+     // module.mjs: envSecret from "@prisma/composer-prisma-cloud"
+     provision(web, {
+       deps: { db: database },
+       input: { sessionSecret: envSecret('SESSION_SECRET') },
+     }));
    // src/server.ts
    const SESSION_SECRET = service.input().sessionSecret.expose();
    ```
 
    Add `arktype` as a direct dependency, at the version `@prisma/composer` uses
    (`npm ls arktype`). The user sets the values with `prisma project env add KEY --role
-   production` and `--role preview`. Ask the user for values; never invent secrets.
+production` and `--role preview`. Ask the user for values; never invent secrets.
 
 Then ask the user before pushing. After the push, `npx prisma service list --branch
 prisma-cloud/setup` shows the preview URL.
@@ -144,7 +161,7 @@ prisma-cloud/setup` shows the preview URL.
 ## Bad
 
 ```typescript
-export const db = postgres({ contract, url: process.env["DATABASE_URL"]! }); // "-" on Compute
+export const db = postgres({ contract, url: process.env['DATABASE_URL']! }); // "-" on Compute
 ```
 
 ## Good

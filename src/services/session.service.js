@@ -1,11 +1,10 @@
-
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
 import {
   generateRefreshToken,
   generateTokenFamilyId,
   hashRefreshToken,
-} from "../utils/refreshToken.js";
-import { generateAccessToken } from "../utils/token.js";
+} from '../utils/refreshToken.js';
+import { generateAccessToken } from '../utils/token.js';
 
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
 
@@ -14,7 +13,7 @@ export const createSession = async (userId) => {
   const familyId = generateTokenFamilyId();
 
   const expiresAt = new Date(
-    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
   );
 
   await prisma.refreshToken.create({
@@ -29,7 +28,6 @@ export const createSession = async (userId) => {
   return refreshToken;
 };
 
-
 export const findSessionByToken = async (refreshToken) => {
   const tokenHash = hashRefreshToken(refreshToken);
 
@@ -39,7 +37,6 @@ export const findSessionByToken = async (refreshToken) => {
     },
   });
 };
-
 
 export const revokeSession = async (refreshToken) => {
   const session = await findSessionByToken(refreshToken);
@@ -59,7 +56,6 @@ export const revokeSession = async (refreshToken) => {
 
   return true;
 };
-
 
 export const rotateSession = async (refreshToken) => {
   const tokenHash = hashRefreshToken(refreshToken);
@@ -124,7 +120,7 @@ export const rotateSession = async (refreshToken) => {
     }
 
     const expiresAt = new Date(
-      now.getTime() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+      now.getTime() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
     );
 
     await tx.refreshToken.create({

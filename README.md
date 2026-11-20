@@ -8,16 +8,16 @@ The setup uses Prisma's PostgreSQL driver adapter (`@prisma/adapter-pg`) with th
 
 ### Technology stack
 
-| Technology | Version |
-|---|---|
-| Node.js | 22.23.4 |
-| Prisma CLI | 7.10.1 |
-| @prisma/client | 7.10.0 |
-| @prisma/adapter-pg | 7.10.0 |
-| pg | 8.23.1 |
-| PostgreSQL | 18.7 |
-| Database hosting | Neon |
-| Operating system | Linux x64 |
+| Technology         | Version   |
+| ------------------ | --------- |
+| Node.js            | 22.23.4   |
+| Prisma CLI         | 7.10.1    |
+| @prisma/client     | 7.10.0    |
+| @prisma/adapter-pg | 7.10.0    |
+| pg                 | 8.23.1    |
+| PostgreSQL         | 18.7      |
+| Database hosting   | Neon      |
+| Operating system   | Linux x64 |
 
 ## 2. Install dependencies
 
@@ -74,16 +74,16 @@ Prisma 7 separates database configuration from the Prisma schema.
 Create this file in the backend root directory:
 
 ```ts
-import "dotenv/config";
-import { defineConfig } from "prisma/config";
+import 'dotenv/config';
+import { defineConfig } from 'prisma/config';
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: 'prisma/schema.prisma',
   migrations: {
-    path: "prisma/migrations",
+    path: 'prisma/migrations',
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: process.env['DATABASE_URL'],
   },
 });
 ```
@@ -123,10 +123,10 @@ Create:
 `src/config/prisma.js`
 
 ```js
-import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -170,7 +170,7 @@ The `Pool` manages database connections, avoiding the need to establish an entir
 Import this shared Prisma instance wherever database access is required:
 
 ```js
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
 ```
 
 ## 6. Define database models
@@ -230,7 +230,7 @@ This is important because Prisma Client needs to be regenerated to expose newly 
 For example, after adding a `RefreshToken` model, regenerate Prisma Client before accessing:
 
 ```js
-prisma.refreshToken
+prisma.refreshToken;
 ```
 
 ### Validate the schema
@@ -245,15 +245,15 @@ This checks whether the Prisma schema is valid.
 
 ## 8. Useful Prisma commands
 
-| Command | Purpose |
-|---|---|
-| `npx prisma init` | Initialize Prisma |
-| `npx prisma validate` | Validate schema |
-| `npx prisma generate` | Generate Prisma Client |
-| `npx prisma migrate dev` | Create and apply development migrations |
-| `npx prisma migrate status` | Check migration status |
-| `npx prisma migrate deploy` | Apply pending migrations in deployment |
-| `npx prisma studio` | Open the Prisma database browser |
+| Command                     | Purpose                                 |
+| --------------------------- | --------------------------------------- |
+| `npx prisma init`           | Initialize Prisma                       |
+| `npx prisma validate`       | Validate schema                         |
+| `npx prisma generate`       | Generate Prisma Client                  |
+| `npx prisma migrate dev`    | Create and apply development migrations |
+| `npx prisma migrate status` | Check migration status                  |
+| `npx prisma migrate deploy` | Apply pending migrations in deployment  |
+| `npx prisma studio`         | Open the Prisma database browser        |
 
 ## 9. Neon PostgreSQL considerations
 

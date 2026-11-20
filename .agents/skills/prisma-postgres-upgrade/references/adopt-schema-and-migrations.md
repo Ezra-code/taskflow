@@ -16,17 +16,20 @@ tables.
 ## The first `prisma.config.ts` (step 2)
 
 ```typescript
-import "dotenv/config"; // only if the app already uses dotenv
-import { defineConfig as orm, prisma7Schema } from "@prisma/orm-postgres/config";
-import { definePrismaConfig } from "prisma/config";
+import 'dotenv/config'; // only if the app already uses dotenv
+import {
+  defineConfig as orm,
+  prisma7Schema,
+} from '@prisma/orm-postgres/config';
+import { definePrismaConfig } from 'prisma/config';
 
 export default definePrismaConfig({
   orm: orm({
-    contract: prisma7Schema("prisma/schema.prisma"), // the same file, Prisma ORM 6 or 7
-    output: "src/prisma",
-    db: { connection: process.env["DATABASE_URL"]! },
+    contract: prisma7Schema('prisma/schema.prisma'), // the same file, Prisma ORM 6 or 7
+    output: 'src/prisma',
+    db: { connection: process.env['DATABASE_URL']! },
   }),
-  skills: { agents: ["claude"] }, // only the agents the repository uses
+  skills: { agents: ['claude'] }, // only the agents the repository uses
 });
 ```
 
