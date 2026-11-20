@@ -3,9 +3,12 @@ import cors from 'cors';
 import apiRouter from './routes/index.js';
 import errorHandler from './middleware/errorHandler.js';
 import notFound from './middleware/notFound.js';
+import passport from "./config/passport.js";
 const app = express();
 
+app.use(passport.initialize());
 app.use(cors());
+
 app.use(express.json());
 app.use('/api/v1', apiRouter);
 
