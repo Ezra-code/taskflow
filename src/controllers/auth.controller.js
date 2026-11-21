@@ -25,46 +25,83 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const result = await loginUser(req.body);
 
+  const { refreshToken, ...responseData } = result;
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/api/v1/auth",
+  });
+
   res.status(200).json({
-    status: 'success',
-    message: 'Login successful',
-    data: result,
+    status: "success",
+    message: "Login successful",
+    data: responseData,
   });
 };
 
 export const refresh = async (req, res) => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refreshToken;
 
-  const tokens = await rotateSession(refreshToken);
-
-  if (!tokens) {
-    throw createAppError('Invalid or expired refresh token', 401);
+  if (!refreshToken) {
+    throw createAppError("Refresh token required", 401);
   }
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Token refreshed successfully',
-    data: tokens,
+  const result = await rotateSession(refreshToken);
+
+  const { refreshToken: newRefreshToken, ...responseData } = result;
+
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/api/v1/auth",
+  });
+
+  return res.status(200).json({
+    status: "success",
+    message: "Session refreshed",
+    data: responseData,
   });
 };
 
 export const logout = async (req, res) => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refreshToken;
 
-  await revokeSession(refreshToken);
+  if (refreshToken) {
+    await revokeSession(refreshToken);
+  }
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Logged out successfully',
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/v1/auth",
+  });
+
+  return res.status(200).json({
+    status: "success",
+    message: "Logged out successfully",
   });
 };
+
 
 export const logoutAll = async (req, res) => {
   const revokedSessions = await revokeAllSessions(req.user.id);
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Logged out from all devices successfully',
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/v1/auth",
+  });
+
+  return res.status(200).json({
+    status: "success",
+    message: "Logged out from all devices successfully",
     data: {
       revokedSessions,
     },
