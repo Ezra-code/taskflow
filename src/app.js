@@ -8,7 +8,14 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 app.use(passport.initialize());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);;
 
 app.use(express.json());
 app.use(cookieParser());
